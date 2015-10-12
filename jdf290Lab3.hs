@@ -1,0 +1,67 @@
+--Jonah Fidel 
+--9/17/15
+--COSC 290 
+--Lab #3 
+
+--1.) 
+data SET a = E | Add(a, SET a) deriving (Eq, Ord, Read, Show)
+
+inS val E = False 
+inS val (Add(x, set)) = if val == x
+						then True 
+						else inS val set
+
+addtoSet val s = if inS val s 
+				then s
+				else Add(val, s)
+
+union (E, set2) = set2 
+union ((Add(val, rest)), set2) = if inS val set2 
+								then union (rest, set2) 
+								else union (rest, (addtoSet val set2))
+
+inter (E, set) = E 
+inter ((Add(val, rest)), set) = if inS val set 
+								then (Add(val, inter(rest, set)))
+								else inter (rest, set)
+
+subSet (set1, set2) = if union(set1, set2) == set2 
+					  then True 
+					  else False
+
+setEq (set1, set2) = if (inter(set1, set2) == set1 && inter(set1, set2) == set2) 
+					then True 
+					else False
+
+setToList E = []
+setToList (Add(val, rest)) = val : setToList(rest)
+
+listToSet [] = E 
+listToSet (val:rest) = (Add(val, listToSet(rest)))
+
+set1 = listToSet("abcd") 
+set2 = listToSet("cdef")
+set3 = listToSet [1, 2, 3, 4]
+set4 = listToSet [5, 6, 7, 8]
+set5 = listToSet [3, 4]
+set6 = listToSet [3, 4, 7, 8]
+set7 = listToSet [1, 2, 3, 4, 5, 6, 7, 8]
+
+--tests 
+--Main> inS 'a' set1
+--True
+--Main> addtoSet 18 set3
+--Add (18,Add (1,Add (2,Add (3,Add (4,E)))))
+--Main> union (set3, set4)
+--Add (4,Add (3,Add (2,Add (1,Add (5,Add (6,Add (7,Add (8,E))))))))
+--Main> subSet (set6, set7)
+--True
+--setEq(set6, set7)
+--False
+--setEq(set7, set7)
+--True
+
+
+
+
+
